@@ -8,7 +8,7 @@ pub struct App;
 impl engine::State for App {
     fn update(
         &mut self,
-        _engine_context: &mut engine::Context,
+        _service_bus: &mut engine::ServiceBus,
         ui_context: &engine::egui::Context,
     ) {
         engine::egui::Window::new("Doge").show(ui_context, |ui| {

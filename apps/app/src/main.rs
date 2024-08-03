@@ -1,16 +1,12 @@
 fn main() {
-    engine::launch(App);
+    engine::launch(App::default());
 }
 
 #[derive(Default)]
-pub struct App;
+pub struct App {}
 
 impl engine::State for App {
-    fn update(
-        &mut self,
-        _engine_context: &mut engine::Context,
-        ui_context: &engine::egui::Context,
-    ) {
+    fn update(&mut self, bus: &mut engine::ServiceBus, ui_context: &engine::egui::Context) {
         #[cfg(not(target_arch = "wasm32"))]
         let title = "Rust/Wgpu";
 
@@ -24,6 +20,10 @@ impl engine::State for App {
             ui.heading("Hello, world!");
             if ui.button("Click me!").clicked() {
                 engine::log::info!("Button clicked!");
+                let command = engine::contract::Command::Notify {
+                    content: "Hello, world!".to_string(),
+                };
+                bus.publish_command(command);
             }
         });
     }

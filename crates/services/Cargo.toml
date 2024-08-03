@@ -1,0 +1,11 @@
+[package]
+name = "services"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+broker = { path = "../broker" }
+contract = { path = "../contract" }
+client = { path = "../client" }
+log = "0.4.22"
+uuid = { version = "1.4.1", features = ["v4", "js"] }

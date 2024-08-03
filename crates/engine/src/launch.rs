@@ -1,18 +1,15 @@
 #[cfg(not(target_arch = "wasm32"))]
 pub use std::time::{Duration, Instant};
 
+use services::ServiceBus;
 #[cfg(target_arch = "wasm32")]
 pub use web_time::{Duration, Instant};
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-/// Data shared between engine and application layers
-#[derive(Default)]
-pub struct Context {}
-
 pub trait State {
-    fn update(&mut self, _engine_context: &mut Context, _ui_context: &egui::Context);
+    fn update(&mut self, _bus: &mut ServiceBus, _ui_context: &egui::Context);
 }
 
 pub fn launch(state: impl State + 'static) {
@@ -88,7 +85,7 @@ async fn run_app(
 
     let mut renderer = crate::renderer::Renderer::new(window.clone(), width, height).await;
 
-    let mut app_context = Context::default();
+    let mut service_bus = ServiceBus::new();
 
     let mut last_render_time = Instant::now();
 
@@ -143,7 +140,8 @@ async fn run_app(
                             let gui_input = gui_state.take_egui_input(&window);
                             gui_state.egui_ctx().begin_frame(gui_input);
 
-                            app.update(&mut app_context, gui_state.egui_ctx());
+                            service_bus.update();
+                            app.update(&mut service_bus, gui_state.egui_ctx());
 
                             let egui::FullOutput {
                                 textures_delta,

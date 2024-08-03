@@ -18,7 +18,7 @@ impl<T: Clone> Default for Client<T> {
         Self {
             id: Uuid::new_v4(),
             event_queue: RefCell::new(VecDeque::new()),
-            ring_buffer_size: 100,
+            ring_buffer_size: 1000,
         }
     }
 }

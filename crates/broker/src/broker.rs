@@ -6,9 +6,22 @@ use std::{
 };
 use uuid::Uuid;
 
-#[derive(Default)]
 pub struct Broker<T: Clone> {
     subscribers: HashMap<String, Vec<Weak<RefCell<Client<T>>>>>,
+}
+
+impl<T: Clone + std::fmt::Debug> std::fmt::Debug for Broker<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Broker")
+            .field("subscribers", &self.subscribers.keys())
+            .finish()
+    }
+}
+
+impl<T: Clone + Default> Default for Broker<T> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<T: Clone> Broker<T> {
