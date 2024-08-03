@@ -8,5 +8,5 @@ pub use contract;
 pub use egui;
 pub use log;
 
-pub use services;
-pub use services::ServiceBus;
+pub use service;
+pub use service::ServiceBus;

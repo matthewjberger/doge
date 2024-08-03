@@ -1,13 +1,13 @@
 #[cfg(not(target_arch = "wasm32"))]
 pub use std::time::{Duration, Instant};
 
-use services::ServiceBus;
 #[cfg(target_arch = "wasm32")]
 pub use web_time::{Duration, Instant};
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
+use service::ServiceBus;
 use std::fmt;
 
 pub trait State<C, E>

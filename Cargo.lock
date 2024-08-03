@@ -580,13 +580,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "doge"
-version = "0.1.0"
-dependencies = [
- "engine",
-]
-
-[[package]]
 name = "downcast-rs"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -672,7 +665,7 @@ dependencies = [
  "log",
  "nalgebra-glm",
  "pollster",
- "services",
+ "service",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -1732,7 +1725,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "services"
+name = "service"
 version = "0.1.0"
 dependencies = [
  "broker",
@@ -1890,6 +1883,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "template"
+version = "0.1.0"
+dependencies = [
+ "engine",
 ]
 
 [[package]]
