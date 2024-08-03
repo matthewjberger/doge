@@ -1,79 +1,97 @@
-use client::Client;
-use contract::{Command, Message};
+use contract::{
+    EngineEvent, APP_COMMAND_TOPIC, APP_EVENT_TOPIC, ENGINE_COMMAND_TOPIC, ENGINE_EVENT_TOPIC,
+};
+use core::fmt;
 use std::collections::HashMap;
 use uuid::Uuid;
 
-#[derive(Default)]
-pub struct NotificationService {
-    client: Client,
-    subscribed: bool,
-}
+pub type Broker<C, E> = broker::Broker<contract::EngineMessage<C, E>>;
 
-impl Service for NotificationService {
-    fn update(&mut self, broker: &mut Broker) {
-        if !self.subscribed {
-            log::info!("Notification service initialized");
-            self.client
-                .subscribe_to_topic(Message::COMMAND_TOPIC, broker);
-            self.subscribed = true;
-        }
-        if let Some(Message::Command {
-            command: Command::Notify { content },
-        }) = self.client.next_message()
-        {
-            log::info!("NotificationService::update: {content}");
-        }
-    }
-}
-
-pub type Broker = broker::Broker<contract::Message>;
-
-pub trait Service {
-    fn update(&mut self, _broker: &mut Broker);
+pub trait Service<C, E>
+where
+    C: Clone + fmt::Debug + 'static,
+    E: Clone + fmt::Debug + 'static,
+{
+    fn update(&mut self, _broker: &mut Broker<C, E>);
 }
 
 /// Contains the main message broker
 ///
 /// Services can be registered here
-#[derive(Default)]
-pub struct ServiceBus {
-    broker: Broker,
-    services: HashMap<Uuid, Box<dyn Service>>,
+pub struct ServiceBus<C, E>
+where
+    C: Clone + fmt::Debug + 'static,
+    E: Clone + fmt::Debug + 'static,
+{
+    broker: Broker<C, E>,
+    services: HashMap<Uuid, Box<dyn Service<C, E>>>,
 }
 
-impl ServiceBus {
-    pub fn new() -> Self {
-        let mut bus = Self::default();
-        bus.register_service(NotificationService::default());
-        bus
+impl<C, E> Default for ServiceBus<C, E>
+where
+    C: Clone + fmt::Debug + 'static,
+    E: Clone + fmt::Debug + 'static,
+{
+    fn default() -> Self {
+        Self {
+            broker: Broker::default(),
+            services: HashMap::new(),
+        }
     }
 }
 
-impl ServiceBus {
+impl<C, E> ServiceBus<C, E>
+where
+    C: Clone + fmt::Debug + 'static,
+    E: Clone + fmt::Debug + 'static,
+{
     /// Registers a service with the bus
-    pub fn register_service(&mut self, service: impl Service + 'static) -> uuid::Uuid {
+    pub fn register_service(&mut self, service: impl Service<C, E> + 'static) -> uuid::Uuid {
         let uuid = uuid::Uuid::new_v4();
+        log::info!("[Register] Service registered: {uuid:?}");
         self.services.insert(uuid, Box::new(service));
         uuid
     }
 
     /// Unregisters a service with the bus
     pub fn unregister_service(&mut self, uuid: &uuid::Uuid) {
+        log::info!("[Unregister] Service unregistered: {uuid:?}");
         self.services.remove(uuid);
     }
 
-    /// Publish a message to the broker
-    pub fn publish_message(&mut self, topic: &str, message: contract::Message) {
-        log::info!("Published message. topic: {topic} {message:?}");
+    /// Publish an engine message to the broker
+    pub fn publish_engine_message(&mut self, topic: &str, message: contract::EngineMessage<C, E>) {
+        log::info!("[Publish] Topic: {topic} Message: {message:?}");
         self.broker.publish(topic, message);
     }
 
-    /// Publish a command message to the broker
-    pub fn publish_command(&mut self, command: contract::Command) {
-        self.publish_message(
-            contract::Message::COMMAND_TOPIC,
-            contract::Message::Command { command },
+    /// Publish an engine command message to the broker
+    pub fn publish_engine_command(&mut self, command: contract::EngineCommand) {
+        self.publish_engine_message(
+            ENGINE_COMMAND_TOPIC,
+            contract::EngineMessage::EngineCommand { command },
         );
+    }
+
+    /// Publish an engine event message to the broker
+    pub fn publish_engine_event(&mut self, event: EngineEvent) {
+        self.publish_engine_message(
+            ENGINE_EVENT_TOPIC,
+            contract::EngineMessage::EngineEvent { event },
+        );
+    }
+
+    /// Publish an app command message to the broker
+    pub fn publish_app_command(&mut self, command: C) {
+        self.publish_engine_message(
+            APP_COMMAND_TOPIC,
+            contract::EngineMessage::AppCommand { command },
+        );
+    }
+
+    /// Publish an app event message to the broker
+    pub fn publish_app_event(&mut self, event: E) {
+        self.publish_engine_message(APP_EVENT_TOPIC, contract::EngineMessage::AppEvent { event });
     }
 
     /// Called continually to update all services

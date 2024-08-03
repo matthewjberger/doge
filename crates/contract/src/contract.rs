@@ -1,36 +1,41 @@
+use std::fmt;
+
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
-pub enum Message {
+pub enum EngineMessage<C, E>
+where
+    C: fmt::Debug,
+    E: fmt::Debug,
+{
     #[default]
     Empty,
-    Command {
-        command: Command,
+    EngineCommand {
+        command: EngineCommand,
     },
-    Event {
-        event: Event,
+    EngineEvent {
+        event: EngineEvent,
+    },
+    AppCommand {
+        command: C,
+    },
+    AppEvent {
+        event: E,
     },
 }
 
-impl Message {
-    pub const COMMAND_TOPIC: &'static str = "command";
-    pub const EVENT_TOPIC: &'static str = "event";
+pub const ENGINE_COMMAND_TOPIC: &str = "engine_command";
+pub const ENGINE_EVENT_TOPIC: &str = "engine_event";
+
+pub const APP_COMMAND_TOPIC: &str = "app_command";
+pub const APP_EVENT_TOPIC: &str = "app_event";
+
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
+pub enum EngineCommand {
+    #[default]
+    Empty,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
-pub enum Command {
+pub enum EngineEvent {
     #[default]
     Empty,
-
-    Notify {
-        content: String,
-    },
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq)]
-pub enum Event {
-    #[default]
-    Empty,
-
-    Notification {
-        content: String,
-    },
 }

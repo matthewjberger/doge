@@ -8,11 +8,21 @@ pub use web_time::{Duration, Instant};
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-pub trait State {
-    fn update(&mut self, _bus: &mut ServiceBus, _ui_context: &egui::Context);
+use std::fmt;
+
+pub trait State<C, E>
+where
+    C: Clone + fmt::Debug + 'static,
+    E: Clone + fmt::Debug + 'static,
+{
+    fn update(&mut self, _bus: &mut ServiceBus<C, E>, _ui_context: &egui::Context);
 }
 
-pub fn launch(state: impl State + 'static) {
+pub fn launch<C, E>(state: impl State<C, E> + 'static)
+where
+    C: Clone + fmt::Debug + 'static,
+    E: Clone + fmt::Debug + 'static,
+{
     let event_loop = winit::event_loop::EventLoopBuilder::with_user_event()
         .build()
         .expect("Failed to create event loop");
@@ -55,11 +65,14 @@ pub fn launch(state: impl State + 'static) {
     }
 }
 
-async fn run_app(
+async fn run_app<C, E>(
     event_loop: winit::event_loop::EventLoop<()>,
     window: winit::window::Window,
-    mut app: impl State + 'static,
-) {
+    mut app: impl State<C, E> + 'static,
+) where
+    C: Clone + fmt::Debug + 'static,
+    E: Clone + fmt::Debug + 'static,
+{
     let window = std::sync::Arc::new(window);
 
     let gui_context = egui::Context::default();
@@ -85,7 +98,7 @@ async fn run_app(
 
     let mut renderer = crate::renderer::Renderer::new(window.clone(), width, height).await;
 
-    let mut service_bus = ServiceBus::new();
+    let mut service_bus = ServiceBus::default();
 
     let mut last_render_time = Instant::now();
 
