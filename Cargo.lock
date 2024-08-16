@@ -488,9 +488,6 @@ dependencies = [
 [[package]]
 name = "contract"
 version = "0.1.0"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "core-foundation"
@@ -653,8 +650,6 @@ dependencies = [
 name = "engine"
 version = "0.1.0"
 dependencies = [
- "broker",
- "bytemuck",
  "console_error_panic_hook",
  "console_log",
  "contract",
@@ -663,14 +658,13 @@ dependencies = [
  "egui-winit",
  "env_logger",
  "log",
- "nalgebra-glm",
  "pollster",
+ "render",
  "service",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
  "web-time 1.1.0",
- "wgpu",
  "winit",
 ]
 
@@ -1639,6 +1633,26 @@ name = "regex-syntax"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a66a03ae7c801facd77a29370b4faec201768915ac14a721ba36f20bc9c209b"
+
+[[package]]
+name = "render"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "console_error_panic_hook",
+ "console_log",
+ "egui",
+ "egui-wgpu",
+ "egui-winit",
+ "log",
+ "nalgebra-glm",
+ "pollster",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "web-time 1.1.0",
+ "wgpu",
+]
 
 [[package]]
 name = "renderdoc-sys"

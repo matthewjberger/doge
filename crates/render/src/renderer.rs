@@ -1,3 +1,9 @@
+#[cfg(not(target_arch = "wasm32"))]
+pub use std::time::Duration;
+
+#[cfg(target_arch = "wasm32")]
+pub use web_time::Duration;
+
 pub struct Renderer<'window> {
     gpu: Gpu<'window>,
     depth_texture_view: wgpu::TextureView,
@@ -44,7 +50,7 @@ impl<'window> Renderer<'window> {
         screen_descriptor: egui_wgpu::ScreenDescriptor,
         paint_jobs: Vec<egui::ClippedPrimitive>,
         textures_delta: egui::TexturesDelta,
-        delta_time: crate::Duration,
+        delta_time: Duration,
     ) {
         let delta_time = delta_time.as_secs_f32();
 

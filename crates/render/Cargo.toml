@@ -1,20 +1,18 @@
 [package]
-name = "engine"
+name = "render"
 version = "0.1.0"
 edition = "2021"
 
-[lib]
-crate-type = ["cdylib", "rlib"]
-
 [dependencies]
-contract = { path = "../contract" }
+bytemuck = { version = "1.16.3", features = ["derive"] }
 egui = "0.27.2"
 egui-wgpu = { version = "0.27.2", features = ["winit"] }
-env_logger = "0.11.5"
 log = "0.4.22"
-render = { path = "../render" }
-service = { path = "../service" }
-winit = "0.29.15"
+nalgebra-glm = { version = "0.18.0", features = [
+    "convert-bytemuck",
+    "serde-serialize",
+] }
+wgpu = { version = "0.19.4", default-features = false }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 egui-winit = "0.27.2"
@@ -36,6 +34,6 @@ web-sys = { version = "0.3.69", features = [
 web-time = "1.1.0"
 
 [features]
-default = ["render/default"]
-webgl = ["render/webgl"]
-webgpu = ["render/webgpu"]
+default = ["wgpu/default"]
+webgl = ["wgpu/webgl"]
+webgpu = ["wgpu/webgpu"]

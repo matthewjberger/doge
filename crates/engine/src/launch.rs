@@ -96,7 +96,7 @@ async fn run_app<C, E>(
     #[cfg(target_arch = "wasm32")]
     let (width, height) = (1280, 720);
 
-    let mut renderer = crate::renderer::Renderer::new(window.clone(), width, height).await;
+    let mut renderer = render::Renderer::new(window.clone(), width, height).await;
 
     let mut service_bus = ServiceBus::default();
 
