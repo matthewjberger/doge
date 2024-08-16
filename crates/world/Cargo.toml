@@ -10,4 +10,4 @@ nalgebra-glm = { version = "0.18.0", features = [
     "convert-bytemuck",
 ] }
 petgraph = { version = "0.6.5", features = ["serde-1"] }
-serde = { version = "1.0.206", features = ["derive"] }
+serde = { version = "1.0.208", features = ["derive"] }

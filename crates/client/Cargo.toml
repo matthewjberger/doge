@@ -6,4 +6,4 @@ edition = "2021"
 [dependencies]
 broker = { path = "../broker" }
 contract = { path = "../contract" }
-uuid = { version = "1.4.1", features = ["v4", "js"] }
+uuid = { version = "1.10.0", features = ["v4", "js"] }

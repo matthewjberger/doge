@@ -8,4 +8,4 @@ broker = { path = "../broker" }
 contract = { path = "../contract" }
 client = { path = "../client" }
 log = "0.4.22"
-uuid = { version = "1.4.1", features = ["v4", "js"] }
+uuid = { version = "1.10.0", features = ["v4", "js"] }

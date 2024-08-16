@@ -1,0 +1,8 @@
+[package]
+name = "physics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nalgebra-glm = { version = "0.18.0", features = ["serde-serialize"] }
+serde = { version = "1.0.206", features = ["derive"] }
